@@ -1,5 +1,7 @@
 package com.example.booking.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,5 +35,12 @@ public class BookingController {
     public ResponseEntity<Booking> getTicketByPnr(@PathVariable String pnr) {
         Booking booking = bookingService.getTicketByPnr(pnr);
         return new ResponseEntity<>(booking, HttpStatus.OK);
+    }
+	
+	@GetMapping("/booking/history/{emailId}")
+    public ResponseEntity<List<Booking>> getBookingHistoryByEmail(
+    		@PathVariable String emailId){
+    	List<Booking> history = bookingService.getBookingHistoryByEmail(emailId);
+    	return new ResponseEntity<>(history, HttpStatus.OK);
     }
 }
