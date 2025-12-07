@@ -47,8 +47,6 @@ public class BookingController {
 	
 	@DeleteMapping("/booking/cancel/{pnr}")
     public ResponseEntity<String> cancelTicket(@PathVariable String pnr) {
-        bookingService.cancelTicket(pnr);
-        return new ResponseEntity<>("Ticket with PNR " + pnr + 
-        		" cancelled successfully.", HttpStatus.OK);
+        return bookingService.cancelTicket(pnr);
     }
 }

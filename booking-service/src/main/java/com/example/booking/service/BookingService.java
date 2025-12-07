@@ -23,6 +23,7 @@ import com.example.booking.feign.BookingInterface;
 import com.example.booking.repository.BookingRepository;
 
 import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 import org.springframework.stereotype.Service;
 
@@ -44,11 +45,13 @@ public class BookingService {
 	}
 
 	@Transactional
+	@CircuitBreaker(name = "flightServiceBreaker", fallbackMethod = "flightServiceFallback")
 	public ResponseEntity<String> bookTicket(Long flightId, BookingRequest bookingRequest) {
 		FlightDTO flightDto;
 		try {
 			flightDto = bookingInterface.getFlightById(flightId);
-		} catch (FeignException e) {
+		} 
+		catch (FeignException e) {
 			return new ResponseEntity<>("Ticket Booking is currently unavailable due to Flight Service failure.",
 					HttpStatus.SERVICE_UNAVAILABLE);
 
@@ -134,7 +137,8 @@ public class BookingService {
 	}
 	
 	@Transactional
-	public void cancelTicket(String pnr) {
+	@CircuitBreaker(name = "flightServiceBreaker", fallbackMethod = "flightServiceFallback")
+	public ResponseEntity<String> cancelTicket(String pnr) {
 		Booking booking = getTicketByPnr(pnr);
 		Long flightId = booking.getFlightId();
 		int cancelledSeats = booking.getNumberOfSeats();
@@ -142,14 +146,10 @@ public class BookingService {
 		try {
 			flightDto = bookingInterface.getFlightById(flightId);
 		} 
-		catch (FeignException.NotFound e) {
-			throw new RuntimeException("Cannot retrieve flight details for ID: " + flightId, e);
-		} 
 		catch (FeignException e) {
-			// network changes can cause this some times
-			System.err.println("Feign error during flight communication: " + e.contentUTF8());
-			System.err.println("Status: " + e.status());
-			throw new RuntimeException("Failed to communicate with Flight Service during cancellation.", e);
+			return new ResponseEntity<>("Ticket Cancelling is currently unavailable due to Flight Service failure.",
+					HttpStatus.SERVICE_UNAVAILABLE);
+
 		}
 
 		// Check if the current time is AFTER the deadline
@@ -164,7 +164,17 @@ public class BookingService {
 		}
 		flightDto.setAvailableSeats(flightDto.getAvailableSeats() + cancelledSeats);
 		bookingInterface.updateFlightInventory(flightDto);
-
 		bookingRepository.delete(booking);
+		
+		return new ResponseEntity<>("Ticket with PNR " + pnr + 
+        		" cancelled successfully.", HttpStatus.OK);
+	}
+	
+	public ResponseEntity<String> flightServiceFallback(Long flightId, Throwable t) {
+		System.out.println("Flight Service is down");
+		System.out.println("Error: " + t.getMessage());
+
+		return new ResponseEntity<>("Ticket Booking/Cancelling is currently unavailable due to Flight Service failure.",
+				HttpStatus.SERVICE_UNAVAILABLE);
 	}
 }
