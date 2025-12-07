@@ -3,6 +3,7 @@ package com.example.booking.service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -15,6 +16,7 @@ import com.example.booking.dto.FlightDTO;
 import com.example.booking.dto.PassengerDTO;
 import com.example.booking.entity.Booking;
 import com.example.booking.entity.Passenger;
+import com.example.booking.exception.BookingNotFoundException;
 import com.example.booking.exception.FlightUnavailableException;
 import com.example.booking.feign.BookingInterface;
 import com.example.booking.repository.BookingRepository;
@@ -108,5 +110,15 @@ public class BookingService {
 
 	private String generateUniquePNR() {
 		return "CHUBBFLIGHT" + UUID.randomUUID().toString().substring(0, 6).toUpperCase();
+	}
+	
+	public Booking getTicketByPnr(String pnr) {
+		Optional<Booking> bookingOptional = bookingRepository.findByPnr(pnr);
+		if (!bookingOptional.isPresent()) {
+			throw new BookingNotFoundException(
+					"Ticket with PNR " + pnr + " not found.");
+		}
+
+		return bookingOptional.get();
 	}
 }
