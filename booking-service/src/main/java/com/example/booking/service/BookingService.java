@@ -3,11 +3,14 @@ package com.example.booking.service;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -20,7 +23,9 @@ import com.example.booking.exception.BookingNotFoundException;
 import com.example.booking.exception.CancellationNotPossibleException;
 import com.example.booking.exception.FlightUnavailableException;
 import com.example.booking.feign.BookingInterface;
+import com.example.booking.notification.BookingMessageSender;
 import com.example.booking.repository.BookingRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import feign.FeignException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -31,17 +36,22 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class BookingService {
-
+	private static final Logger log = LoggerFactory.getLogger(BookingService.class);
+	
 	@Autowired
 	BookingRepository bookingRepository;
-
 	@Autowired
 	BookingInterface bookingInterface;
+	private final BookingMessageSender messageSender;
+    private final ObjectMapper objectMapper;
 
 	public BookingService(BookingRepository bookingRepository,
-			BookingInterface bookingInterface) {
+			BookingInterface bookingInterface, BookingMessageSender messageSender,
+			ObjectMapper objectMapper) {
 		this.bookingRepository = bookingRepository;
 		this.bookingInterface = bookingInterface;
+		this.messageSender = messageSender;
+        this.objectMapper = objectMapper;
 	}
 
 	@Transactional
@@ -72,6 +82,24 @@ public class BookingService {
 		
 		Booking booking = requestToEntity(bookingRequest, flightDto, flightId);
 		bookingRepository.save(booking);
+		
+		try{
+            String email = bookingRequest.getUserEmail(); // Assuming email is in the request
+            String pnr = booking.getPnr();
+            String flightDetails = flightDto.getAirlineName() + " (" + flightDto.getFromPlace() + " to " + flightDto.getToPlace() + ")";
+            
+            String notificationPayload = objectMapper.writeValueAsString(
+                Map.of("pnr", pnr, "email", email, "flightDetails", 
+                		flightDetails, "message", "Booking confirmed.")
+            );         
+            messageSender.sendBookingConfirmation(notificationPayload);
+        } 
+		catch(Exception e) {
+            // we dont throw exception if it fails because booking is successful
+			// only email is not sent
+            log.error("Failed to send RabbitMQ notification for PNR: {}", 
+            		booking.getPnr(), e);
+        }
 
 		return new ResponseEntity<>(booking.getPnr(), HttpStatus.CREATED);
 	}

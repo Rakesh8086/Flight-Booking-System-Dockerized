@@ -13,7 +13,7 @@ public class NotificationListener {
     @RabbitListener(queues = RabbitMQConfig.BOOKING_QUEUE)
     public void handleBookingNotification(String bookingMessage) {
         log.info("--- Notification Service Received Message ---");
-        log.info("Received booking details: {}", bookingMessage);
+        log.info("Received booking details: {}", bookingMessage);	
         log.info("Preparing to send confirmation email for booking.");
         log.info("Email content : {}", bookingMessage);
         log.info("Confirmation email sent");
