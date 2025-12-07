@@ -17,6 +17,7 @@ import com.example.booking.dto.PassengerDTO;
 import com.example.booking.entity.Booking;
 import com.example.booking.entity.Passenger;
 import com.example.booking.exception.BookingNotFoundException;
+import com.example.booking.exception.CancellationNotPossibleException;
 import com.example.booking.exception.FlightUnavailableException;
 import com.example.booking.feign.BookingInterface;
 import com.example.booking.repository.BookingRepository;
@@ -130,5 +131,40 @@ public class BookingService {
 		}
 
 		return history;
+	}
+	
+	@Transactional
+	public void cancelTicket(String pnr) {
+		Booking booking = getTicketByPnr(pnr);
+		Long flightId = booking.getFlightId();
+		int cancelledSeats = booking.getNumberOfSeats();
+		FlightDTO flightDto;
+		try {
+			flightDto = bookingInterface.getFlightById(flightId);
+		} 
+		catch (FeignException.NotFound e) {
+			throw new RuntimeException("Cannot retrieve flight details for ID: " + flightId, e);
+		} 
+		catch (FeignException e) {
+			// network changes can cause this some times
+			System.err.println("Feign error during flight communication: " + e.contentUTF8());
+			System.err.println("Status: " + e.status());
+			throw new RuntimeException("Failed to communicate with Flight Service during cancellation.", e);
+		}
+
+		// Check if the current time is AFTER the deadline
+		LocalDateTime departureTime = booking.getJourneyDate().atTime(flightDto.getDepartureTime());
+		LocalDateTime cancellationDeadline = departureTime.minus(
+				24, ChronoUnit.HOURS);
+
+		if (LocalDateTime.now().isAfter(cancellationDeadline)) {
+			throw new CancellationNotPossibleException(
+					"Cancellation failed. Tickets must be cancelled at least "
+							+ "24 hours prior to departure time");
+		}
+		flightDto.setAvailableSeats(flightDto.getAvailableSeats() + cancelledSeats);
+		bookingInterface.updateFlightInventory(flightDto);
+
+		bookingRepository.delete(booking);
 	}
 }
