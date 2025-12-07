@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,6 +67,12 @@ public class FlightController {
                 ));
         
         return new ResponseEntity<>(flightDto, HttpStatus.OK);
+    }
+    
+    @PutMapping("/updateInventory")
+    public ResponseEntity<String> updateFlightInventory(@Valid @RequestBody FlightDTO flightDto) {
+        String response = flightService.updateFlightInventory(flightDto);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
     private FlightDTO flightEntityToDto(Flight flight) {

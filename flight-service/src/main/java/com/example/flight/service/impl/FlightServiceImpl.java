@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.flight.dto.FlightDTO;
 import com.example.flight.entity.Flight;
+import com.example.flight.exception.FlightNotFoundException;
 import com.example.flight.repository.FlightRepository;
 import com.example.flight.service.FlightService;
 
@@ -52,6 +53,20 @@ public class FlightServiceImpl implements FlightService {
     public Optional<FlightDTO> getFlightById(Long flightId) {
     	return flightRepository.findById(flightId)
     	        .map(this::flightEntityToDto);
+    }
+    
+    @Override
+    public String updateFlightInventory(FlightDTO flightDto) {
+        if(flightDto.getId() == null) {
+            throw new IllegalArgumentException("Flight ID is required for inventory update.");
+        }
+        Flight existingFlight = flightRepository.findById(flightDto.getId())
+            .orElseThrow(() -> new FlightNotFoundException(
+            		"Flight not found with ID: " + flightDto.getId()));
+        existingFlight.setAvailableSeats(flightDto.getAvailableSeats());
+        flightRepository.save(existingFlight);
+        
+        return "Inventory of Flight with Id " + existingFlight.getId() + " has been updated.";
     }
     
     private Flight flightDtoToEntity(FlightDTO flightDto) {
