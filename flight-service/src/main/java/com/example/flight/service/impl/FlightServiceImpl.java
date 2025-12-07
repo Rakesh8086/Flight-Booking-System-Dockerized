@@ -3,6 +3,7 @@ package com.example.flight.service.impl;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,6 +48,12 @@ public class FlightServiceImpl implements FlightService {
         );
     }
     
+    @Override
+    public Optional<FlightDTO> getFlightById(Long flightId) {
+    	return flightRepository.findById(flightId)
+    	        .map(this::flightEntityToDto);
+    }
+    
     private Flight flightDtoToEntity(FlightDTO flightDto) {
     	Flight flight = new Flight();
     	
@@ -64,5 +71,20 @@ public class FlightServiceImpl implements FlightService {
     	return flight;
     }
     
-    
+    private FlightDTO flightEntityToDto(Flight flight) {
+    	FlightDTO flightDto = new FlightDTO();
+    	
+    	flightDto.setId(flight.getId());
+    	flightDto.setAirlineName(flight.getAirlineName());
+    	flightDto.setArrivalTime(flight.getArrivalTime());
+    	flightDto.setDepartureTime(flight.getDepartureTime());
+    	flightDto.setPrice(flight.getPrice());
+    	flightDto.setScheduleDate(flight.getScheduleDate());
+    	flightDto.setFromPlace(flight.getFromPlace());
+    	flightDto.setToPlace(flight.getToPlace());
+    	flightDto.setTotalSeats(flight.getTotalSeats());
+    	flightDto.setAvailableSeats(flight.getAvailableSeats());
+    	
+    	return flightDto;
+    }
 }
