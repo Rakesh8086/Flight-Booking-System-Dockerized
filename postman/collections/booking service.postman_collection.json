@@ -1,0 +1,45 @@
+{
+  "info": {
+    "_postman_id": "f660065d-ea6d-4f5f-97b5-77f01f16e186",
+    "name": "booking service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "book ticket",
+      "id": "fc4b0072-7e53-449a-a77c-2d4f87eb8160",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "get ticket by pnr",
+      "id": "eaefaa57-76b7-451f-8ec4-1d67347622c7",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "history by email",
+      "id": "f9d66713-82dd-4f55-9e36-d2330f0039b5",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "cancel ticket",
+      "id": "13b5c012-83ce-45b8-be06-4e203348575f",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

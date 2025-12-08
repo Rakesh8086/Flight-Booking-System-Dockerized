@@ -1,0 +1,105 @@
+{
+  "info": {
+    "_postman_id": "ce23ab9a-e267-4096-b482-6359794c2eeb",
+    "name": "flight-service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "add flight",
+      "id": "9d99d016-73e7-4b37-8f9d-9f35d3b6b05d",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"airlineName\": \"Indigo\",\r\n    \"fromPlace\": \"DEL\",\r\n    \"toPlace\": \"CHE\",\r\n    \"scheduleDate\": \"2025-12-25\",\r\n    \"departureTime\": \"19:00:00\",\r\n    \"arrivalTime\": \"21:30:00\",\r\n    \"price\": 5500.00,\r\n    \"totalSeats\": 180\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/flight/airline/inventory/add",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "flight",
+            "airline",
+            "inventory",
+            "add"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "search flights",
+      "id": "36d7f5e0-132b-4d3a-b674-4d5535e8cbeb",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "book ticket",
+      "id": "df7c5863-f272-4bc5-82a7-cbee35809912",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "get ticket by pnr",
+      "id": "b20ea055-a4d8-4104-abaf-b97df399f34e",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "history of tickets",
+      "id": "12f6e07f-8424-406f-83dd-f87f76cd9a83",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "delete ticket",
+      "id": "10eb5954-8034-439a-b4a6-1b18c561268c",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "get flight by id",
+      "id": "fe0a61da-6991-4ec8-8e05-7b176f65e2c8",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "New Request",
+      "id": "5a84e14c-7fd8-4dba-9c80-bbb530c29e87",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

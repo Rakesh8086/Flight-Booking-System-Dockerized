@@ -1,0 +1,68 @@
+{
+  "info": {
+    "_postman_id": "c953a972-f9c9-4fb7-90af-684ea4296fec",
+    "name": "sprint-login",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "signup",
+      "id": "bfa95d23-f6c8-4a55-bad6-5809ead0d318",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "login",
+      "id": "d60d4e93-d333-4617-9284-d2ab322eb324",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"username\": \"CXV\",\r\n    \"password\": \"abcdef123\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8082/authentication-service/api/auth/signin",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8082",
+          "path": [
+            "authentication-service",
+            "api",
+            "auth",
+            "signin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "logout",
+      "id": "a054f228-3416-4d27-bc48-859192134d10",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "user access",
+      "id": "155f6145-3eac-489e-bf8e-7b0da324bfe6",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
