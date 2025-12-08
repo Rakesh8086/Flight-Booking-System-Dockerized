@@ -23,7 +23,7 @@ public class BookingRequest {
     @NotNull(message = "Journey Date must be provided.")
     private LocalDate journeyDate;
     @NotBlank
-    @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits.")
+    @Pattern(regexp = "^\\d{10}$", message = "Mobile number must be 10 digits.")
     private String mobileNumber; 
     @NotNull
     @Pattern(regexp = "Veg|NonVeg", message = "Meal option must be 'Veg' or 'NonVeg'.")

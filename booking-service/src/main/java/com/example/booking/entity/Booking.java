@@ -30,7 +30,7 @@ public class Booking {
     @Email(message = "Email must be a valid format.")
     private String userEmail;
     @NotBlank
-    @Pattern(regexp = "^[0-9]{10}$", message = "Mobile number must be 10 digits.")
+    @Pattern(regexp = "^\\d{10}$", message = "Mobile number must be 10 digits.")
     private String mobileNumber;
     @NotNull
     private LocalDateTime bookingDate;

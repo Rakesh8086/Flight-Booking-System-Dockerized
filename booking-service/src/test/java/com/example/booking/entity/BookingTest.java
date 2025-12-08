@@ -13,7 +13,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BookingTest {
+class BookingTest {
 
     private Validator validator;
 

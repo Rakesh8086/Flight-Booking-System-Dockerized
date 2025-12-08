@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.*;
 
 @WebMvcTest(BookingController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class BookingControllerTest {
+class BookingControllerTest {
     @Autowired
     MockMvc mvc;
     @MockBean
