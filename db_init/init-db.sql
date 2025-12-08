@@ -1,0 +1,7 @@
+CREATE DATABASE IF NOT EXISTS authservicedb;
+CREATE DATABASE IF NOT EXISTS flightservicedb; 
+CREATE DATABASE IF NOT EXISTS bookingservicedb; 
+USE authservicedb;
+INSERT INTO roles(name) VALUES('ROLE_USER');
+INSERT INTO roles(name) VALUES('ROLE_MODERATOR');
+INSERT INTO roles(name) VALUES('ROLE_ADMIN');

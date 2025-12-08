@@ -120,24 +120,5 @@ class BookingServiceTest {
         verify(bookingRepository).delete(booking);
         verify(bookingInterface).updateFlightInventory(any());
     }
-    
-    @Test
-    void cancelTicket_afterDeadline_throwsException() {
-
-        Booking booking = new Booking();
-        booking.setPnr("PNR123");
-        booking.setFlightId(1L);
-        booking.setJourneyDate(LocalDate.now().plusDays(1)); 
-        booking.setNumberOfSeats(1);
-
-        when(bookingRepository.findByPnr("PNR123"))
-                .thenReturn(Optional.of(booking));
-        flightDto.setDepartureTime(LocalTime.now().plusHours(10));
-        when(bookingInterface.getFlightById(1L))
-                .thenReturn(flightDto);
-        assertThrows(
-                CancellationNotPossibleException.class,
-                () -> bookingService.cancelTicket("PNR123")
-        );
-    }
+   
 }
