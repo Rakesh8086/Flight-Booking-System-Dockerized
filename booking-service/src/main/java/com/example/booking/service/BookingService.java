@@ -198,7 +198,7 @@ public class BookingService {
         		" cancelled successfully.", HttpStatus.OK);
 	}
 	
-	public ResponseEntity<String> flightServiceFallback(Throwable t) {
+	public ResponseEntity<String> flightServiceFallback() {
 
 		return new ResponseEntity<>("Ticket Booking/Cancelling is currently unavailable due to Flight Service failure.",
 				HttpStatus.SERVICE_UNAVAILABLE);
