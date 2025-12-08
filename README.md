@@ -13,3 +13,5 @@
 12) DELETE - Cancel Ticket
 13) Used Sonar Cloud Quality analysis and implemented its suggestions
 14) Dockerized all the microservices
+15) Sonar cloud, Booking service - https://sonarcloud.io/project/overview?id=test-org-project_docker-flight-app
+16) Sonar cloud, Flight Service - https://sonarcloud.io/project/overview?id=test-org-project_docker-flightapp-flightservice
