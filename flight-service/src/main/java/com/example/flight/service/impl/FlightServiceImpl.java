@@ -5,7 +5,6 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.flight.dto.FlightDTO;
@@ -18,8 +17,11 @@ import com.example.flight.service.FlightService;
 @Service
 public class FlightServiceImpl implements FlightService {
 	
-	@Autowired
-    FlightRepository flightRepository;
+    private final FlightRepository flightRepository;
+    
+    public FlightServiceImpl(FlightRepository repo) {
+    	this.flightRepository = repo;
+    }
 
     @Override
     public Long addFlight(FlightDTO flightDto) {

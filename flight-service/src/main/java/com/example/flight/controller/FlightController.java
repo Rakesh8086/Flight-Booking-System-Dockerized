@@ -3,7 +3,6 @@ package com.example.flight.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +25,11 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/flight")
 public class FlightController {
 	
-	@Autowired
-    FlightService flightService;
+    private final FlightService flightService;
+    
+    public FlightController(FlightService service){
+    	this.flightService = service;
+    }
 
     @PostMapping("/airline/inventory/add")
     public ResponseEntity<Long> addFlightInventory(@Valid @RequestBody FlightDTO flightDto) {

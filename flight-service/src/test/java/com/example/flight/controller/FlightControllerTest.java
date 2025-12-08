@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(FlightController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class FlightControllerTest {
+class FlightControllerTest {
     @Autowired
     MockMvc mvc;
     @MockBean
