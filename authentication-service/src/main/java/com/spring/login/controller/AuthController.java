@@ -36,7 +36,8 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*", maxAge = 3600) // * used for public end points
+// @CrossOrigin(origins = "*", maxAge = 3600) // * used for public end points
+// @CrossOrigin(origins = "http://localhost:4200", maxAge = 3600, allowCredentials="true")
 public class AuthController {
 	@Autowired
 	UserRepository userRepository;

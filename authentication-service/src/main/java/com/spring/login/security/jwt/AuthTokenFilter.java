@@ -26,6 +26,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 	private UserDetailsServiceImpl userDetailsService;
 	private static final String PUBLIC_PATH_PATTERN = "/api/auth/**";
 	private static final String SERVICE_ID_PREFIX = "/authentication-service";
+	private static final String TEST_PUBLIC_PATTERN = "/api/test/all";
 	private final AntPathMatcher pathMatcher = new AntPathMatcher();
 	private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
@@ -44,7 +45,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 			pathToCheck = "/" + pathToCheck;
 		}
 
-		if (pathMatcher.match(PUBLIC_PATH_PATTERN, pathToCheck)) {
+		if (pathMatcher.match(PUBLIC_PATH_PATTERN, pathToCheck) ||
+				pathMatcher.match(TEST_PUBLIC_PATTERN, pathToCheck)) {
 			// If the path is public, skip token processing
 			filterChain.doFilter(request, response);
 			return;
@@ -52,7 +54,11 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
 		try {
 			String jwt = parseJwt(request);
-			if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
+			if (jwt == null) {
+			    filterChain.doFilter(request, response);
+			    return;
+			}
+			if (jwtUtils.validateJwtToken(jwt)) {
 				String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
 				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
