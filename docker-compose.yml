@@ -30,7 +30,8 @@ services:
         - "8761:8761"
       environment:
         # Explicitly set the Eureka server URL for self-registration
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=docker
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       depends_on:
         mysql-db: 
           condition: service_healthy
@@ -44,7 +45,8 @@ services:
       ports:
         - "8082:8082"
       environment:
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=docker
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       depends_on:
         eureka-server:
           condition: service_started
@@ -58,9 +60,9 @@ services:
       ports:
         - "8080:8080" 
       environment:
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=docker
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       depends_on:
-        # Flight service needs DB for data and Eureka for discovery
         mysql-db:
           condition: service_healthy
         eureka-server:
@@ -69,22 +71,22 @@ services:
         - microservice-network
     authentication-service:
       build:
-        context: ./authentication-service # Path to the Dockerfile
+        context: ./authentication-service
         dockerfile: Dockerfile
       container_name: auth-service-container
       ports:
         - "8085:8085"
       environment:
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=docker
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       depends_on:
-        # Wait for both dependency services to be healthy
         mysql-db:
           condition: service_healthy 
         eureka-server:
           condition: service_started 
       networks:
         - microservice-network
-    
+
     booking-service:
       build:
         context: ./booking-service 
@@ -93,9 +95,9 @@ services:
       ports:
         - "8083:8083" 
       environment:
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+        - SPRING_PROFILES_ACTIVE=docker
+        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
       depends_on:
-        # Booking service needs all three services to be running/healthy
         mysql-db:
           condition: service_healthy
         eureka-server:
@@ -104,7 +106,6 @@ services:
         - microservice-network
 volumes:
   mysql-data:
-
 networks:
   microservice-network:
     driver: bridge
