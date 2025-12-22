@@ -1,5 +1,4 @@
-FROM maven:3.8.5-openjdk-17 
-WORKDIR /authentication-service 
-COPY . . 
-RUN mvn clean install -DskipTests
-CMD ["mvn", "spring-boot:run", "-Dmaven.test.skip=true"]
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY target/*SNAPSHOT.jar app.jar
+ENTRYPOINT ["java","-jar","/app/app.jar"]
