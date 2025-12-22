@@ -42,16 +42,16 @@ public class BookingService {
 	BookingRepository bookingRepository;
 	@Autowired
 	BookingInterface bookingInterface;
-	private final BookingMessageSender messageSender;
-    private final ObjectMapper objectMapper;
+	// private final BookingMessageSender messageSender;
+    // private final ObjectMapper objectMapper;
 
 	public BookingService(BookingRepository bookingRepository,
 			BookingInterface bookingInterface, BookingMessageSender messageSender,
 			ObjectMapper objectMapper) {
 		this.bookingRepository = bookingRepository;
 		this.bookingInterface = bookingInterface;
-		this.messageSender = messageSender;
-        this.objectMapper = objectMapper;
+		// this.messageSender = messageSender;
+        // this.objectMapper = objectMapper;
 	}
 
 	@Transactional
@@ -83,7 +83,7 @@ public class BookingService {
 		Booking booking = requestToEntity(bookingRequest, flightDto, flightId);
 		bookingRepository.save(booking);
 		
-		try{
+		/*try{
             String email = bookingRequest.getUserEmail(); // Assuming email is in the request
             String pnr = booking.getPnr();
             String flightDetails = flightDto.getAirlineName() + " (" + flightDto.getFromPlace() + " to " + flightDto.getToPlace() + ")";
@@ -99,7 +99,7 @@ public class BookingService {
 			// only email is not sent
             log.error("Failed to send RabbitMQ notification for PNR: {}", 
             		booking.getPnr(), e);
-        }
+        }*/
 
 		return new ResponseEntity<>(booking.getPnr(), HttpStatus.CREATED);
 	}

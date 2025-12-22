@@ -21,10 +21,9 @@ services:
         timeout: 5s
         retries: 5
         start_period: 20s
-
     eureka-server:
       build:
-        context: ./service-registry # Path to the Dockerfile
+        context: ./service-registry 
         dockerfile: Dockerfile
       container_name: eureka-server-container
       ports:
@@ -37,22 +36,6 @@ services:
           condition: service_healthy
       networks:
         - microservice-network
-    rabbitmq:
-      image: 'rabbitmq:3-management'
-      container_name: rabbitmq
-      ports:
-        - '5672:5672' 
-        - '15672:15672' # Management UI port (access at http://localhost:15672)
-      environment:
-        RABBITMQ_DEFAULT_USER: guest
-        RABBITMQ_DEFAULT_PASS: guest
-      healthcheck:
-        test: ["CMD", "rabbitmqctl", "status"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-        start_period: 20s
-      restart: always
     api-gateway:
       build:
         context: ./api-gateway
@@ -69,10 +52,9 @@ services:
         - microservice-network
     flight-service:
       build:
-        context: ./flight-service # Path to the Dockerfile
+        context: ./flight-service 
         dockerfile: Dockerfile
       container_name: flight-service-container
-      # NOTE: Don't expose this port unless you need direct access; Gateway handles routing
       ports:
         - "8080:8080" 
       environment:
@@ -93,57 +75,31 @@ services:
       ports:
         - "8085:8085"
       environment:
-        # Optionally override properties here if needed, but keeping them 
-        # in application.properties is fine since the Docker service names match.
         EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
       depends_on:
         # Wait for both dependency services to be healthy
         mysql-db:
-          condition: service_healthy # Wait until DB is ready to accept connections
+          condition: service_healthy 
         eureka-server:
-          condition: service_started # Wait until Eureka is running
+          condition: service_started 
       networks:
         - microservice-network
     
     booking-service:
       build:
-        context: ./booking-service # Path to the Dockerfile
+        context: ./booking-service 
         dockerfile: Dockerfile
       container_name: booking-service-container
-      # Port mapping is optional, as routing happens via Gateway
       ports:
         - "8083:8083" 
       environment:
-        # Inject Eureka and RabbitMQ hostnames
         EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-        SPRING_RABBITMQ_HOST: rabbitmq
       depends_on:
         # Booking service needs all three services to be running/healthy
         mysql-db:
           condition: service_healthy
         eureka-server:
           condition: service_started
-        rabbitmq:
-          condition: service_healthy
-      networks:
-        - microservice-network
-    notification-service:
-      build:
-        context: ./notification-service
-        dockerfile: Dockerfile
-      container_name: notification-service-container
-      # Port is usually internal as it only handles async tasks
-      ports:
-       - "8084:8084" 
-      environment:
-        EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
-        SPRING_RABBITMQ_HOST: rabbitmq
-      depends_on:
-        # Wait for both dependency services
-        eureka-server:
-          condition: service_started
-        rabbitmq:
-          condition: service_healthy
       networks:
         - microservice-network
 volumes:

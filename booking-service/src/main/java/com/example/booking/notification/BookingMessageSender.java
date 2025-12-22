@@ -8,7 +8,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class BookingMessageSender {
-    private static final Logger log = LoggerFactory.getLogger(BookingMessageSender.class);
+	public String doNothing;
+    /*private static final Logger log = LoggerFactory.getLogger(BookingMessageSender.class);
     private final RabbitTemplate rabbitTemplate;
 
     public BookingMessageSender(RabbitTemplate rabbitTemplate) {
@@ -25,4 +26,5 @@ public class BookingMessageSender {
         
         log.info("Message sent to exchange: {}", RabbitMQProducerConfig.EXCHANGE);
     }
+    */
 }
