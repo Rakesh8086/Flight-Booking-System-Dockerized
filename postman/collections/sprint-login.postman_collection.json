@@ -10,7 +10,10 @@
       "id": "bfa95d23-f6c8-4a55-bad6-5809ead0d318",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": ""
+        }
       },
       "response": []
     },
@@ -51,7 +54,10 @@
       "id": "a054f228-3416-4d27-bc48-859192134d10",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": ""
+        }
       },
       "response": []
     },
@@ -60,7 +66,22 @@
       "id": "155f6145-3eac-489e-bf8e-7b0da324bfe6",
       "request": {
         "method": "GET",
-        "header": []
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "change password",
+      "id": "8e14ef0e-e933-4142-b7c5-efc6b503d839",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
       },
       "response": []
     }

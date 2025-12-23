@@ -1,111 +1,143 @@
 version: '3.8'
 services:
-    mysql-db:
-      image: mysql/mysql-server:latest
-      command: --default-authentication-plugin=mysql_native_password
-      container_name: mysql-db-container
-      environment:
-        MYSQL_ROOT_PASSWORD: mydevroot
-        MYSQL_DATABASE: authservicedb
-        MYSQL_ROOT_HOST: '%'
-      volumes:
-        - mysql-data:/var/lib/mysql
-        - ./db_init:/docker-entrypoint-initdb.d
-      ports:
-        - "3306:3306"
-      networks:
-        - microservice-network
-      healthcheck:
-        test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-pmydevroot"]
-        interval: 10s
-        timeout: 5s
-        retries: 5
-        start_period: 20s
-    eureka-server:
-      build:
-        context: ./service-registry 
-        dockerfile: Dockerfile
-      container_name: eureka-server-container
-      ports:
-        - "8761:8761"
-      environment:
-        # Explicitly set the Eureka server URL for self-registration
-        - SPRING_PROFILES_ACTIVE=docker
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      depends_on:
-        mysql-db: 
-          condition: service_healthy
-      networks:
-        - microservice-network
-    api-gateway:
-      build:
-        context: ./api-gateway
-        dockerfile: Dockerfile
-      container_name: api-gateway-container
-      ports:
-        - "8082:8082"
-      environment:
-        - SPRING_PROFILES_ACTIVE=docker
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      depends_on:
-        eureka-server:
-          condition: service_started
-      networks:
-        - microservice-network
-    flight-service:
-      build:
-        context: ./flight-service 
-        dockerfile: Dockerfile
-      container_name: flight-service-container
-      ports:
-        - "8080:8080" 
-      environment:
-        - SPRING_PROFILES_ACTIVE=docker
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      depends_on:
-        mysql-db:
-          condition: service_healthy
-        eureka-server:
-          condition: service_started
-      networks:
-        - microservice-network
-    authentication-service:
-      build:
-        context: ./authentication-service
-        dockerfile: Dockerfile
-      container_name: auth-service-container
-      ports:
-        - "8085:8085"
-      environment:
-        - SPRING_PROFILES_ACTIVE=docker
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      depends_on:
-        mysql-db:
-          condition: service_healthy 
-        eureka-server:
-          condition: service_started 
-      networks:
-        - microservice-network
+  mysql-db:
+    image: mysql/mysql-server:latest
+    command: --default-authentication-plugin=mysql_native_password
+    container_name: mysql-db-container
+    environment:
+      MYSQL_ROOT_PASSWORD: mydevroot
+      MYSQL_DATABASE: authservicedb
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db_init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    networks:
+      - microservice-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-pmydevroot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
-    booking-service:
-      build:
-        context: ./booking-service 
-        dockerfile: Dockerfile
-      container_name: booking-service-container
-      ports:
-        - "8083:8083" 
-      environment:
-        - SPRING_PROFILES_ACTIVE=docker
-        - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      depends_on:
-        mysql-db:
-          condition: service_healthy
-        eureka-server:
-          condition: service_started
-      networks:
-        - microservice-network
+  config-server:
+    build:
+      context: ./config-server
+      dockerfile: Dockerfile
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - microservice-network
+
+  eureka-server:
+    build:
+      context: ./service-registry
+      dockerfile: Dockerfile
+    container_name: eureka-server-container
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      config-server:
+        condition: service_started
+    networks:
+      - microservice-network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api-gateway-container
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    networks:
+      - microservice-network
+
+  flight-service:
+    build:
+      context: ./flight-service
+      dockerfile: Dockerfile
+    container_name: flight-service-container
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    networks:
+      - microservice-network
+
+  authentication-service:
+    build:
+      context: ./authentication-service
+      dockerfile: Dockerfile
+    container_name: auth-service-container
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    networks:
+      - microservice-network
+
+  booking-service:
+    build:
+      context: ./booking-service
+      dockerfile: Dockerfile
+    container_name: booking-service-container
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka/
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
+      config-server:
+        condition: service_started
+    networks:
+      - microservice-network
+
 volumes:
   mysql-data:
+
 networks:
   microservice-network:
     driver: bridge
