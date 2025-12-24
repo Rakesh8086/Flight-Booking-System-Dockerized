@@ -37,6 +37,12 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             if(!jwtUtils.validateJwtToken(jwt)) {
                 return this.onError(exchange, "Invalid or Expired JWT token", HttpStatus.UNAUTHORIZED);
             }
+            String email = jwtUtils.getEmailFromJwtToken(jwt); 
+            ServerHttpRequest modifiedRequest = exchange.getRequest().mutate()
+                    .header("X-Authenticated-User", email)
+                    .build();
+            System.out.println("********Gateway injecting email**********: " + email);
+            return chain.filter(exchange.mutate().request(modifiedRequest).build());
         }
         // valid request or public request
         return chain.filter(exchange);

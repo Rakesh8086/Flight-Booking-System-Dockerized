@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,16 +34,23 @@ public class BookingController {
 	}
 	
 	@GetMapping("/ticket/{pnr}")
-    public ResponseEntity<Booking> getTicketByPnr(@PathVariable String pnr) {
+    public ResponseEntity<?> getTicketByPnr(@PathVariable String pnr,
+    		@RequestHeader("X-Authenticated-User") String loggedInEmail) {
         Booking booking = bookingService.getTicketByPnr(pnr);
-        return new ResponseEntity<>(booking, HttpStatus.OK);
+        if(booking != null && booking.getUserEmail().equals(loggedInEmail)) {
+            return new ResponseEntity<>(booking, HttpStatus.OK);
+        }
+        
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body("Access Denied: You do not own this ticket.");
     }
 	
-	@GetMapping("/booking/history/{emailId}")
-    public ResponseEntity<List<Booking>> getBookingHistoryByEmail(
-    		@PathVariable String emailId){
-    	List<Booking> history = bookingService.getBookingHistoryByEmail(emailId);
-    	return new ResponseEntity<>(history, HttpStatus.OK);
+	@GetMapping("/booking/history")
+    public ResponseEntity<List<Booking>> getBookingHistoryByEmail( 
+    		@RequestHeader("X-Authenticated-User") String loggedInEmail){
+		System.out.println("******************Received email in Booking Service***************: " + loggedInEmail);
+		List<Booking> history = bookingService.getBookingHistoryByEmail(loggedInEmail);
+        return new ResponseEntity<>(history, HttpStatus.OK);
     }
 	
 	@DeleteMapping("/booking/cancel/{pnr}")
