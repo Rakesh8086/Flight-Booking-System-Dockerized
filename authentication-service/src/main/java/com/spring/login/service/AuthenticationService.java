@@ -1,5 +1,7 @@
 package com.spring.login.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,7 @@ public class AuthenticationService {
 	    }
 		user.setPassword(passwordEncoder.encode(
 				passwordChangeRequest.getNewPassword()));
+		user.setPasswordChangedAt(LocalDateTime.now());
 	    userRepo.save(user);
 
 	    return "Password changed successfully";

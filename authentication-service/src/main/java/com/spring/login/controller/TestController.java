@@ -48,7 +48,7 @@ public class TestController {
   }
   
   @PutMapping("/change/password")
-  @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+  // @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
   public ResponseEntity<String> changePassword(@Valid @RequestBody 
 		PasswordChangeRequest passwordChangeRequest) {
 	    String message = authService.changePassword(

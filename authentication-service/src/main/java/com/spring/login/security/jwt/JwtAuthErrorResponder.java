@@ -12,6 +12,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.spring.login.exception.PasswordExpiredException;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +36,14 @@ public class JwtAuthErrorResponder implements AuthenticationEntryPoint {
     body.put("error", "Unauthorized");
     body.put("message", authException.getMessage());
     body.put("path", request.getServletPath());
+    if(authException instanceof PasswordExpiredException) {
+       body.put("error", "PASSWORD_EXPIRED");
+       body.put("message", "Password expired. Change required.");
+    } 
+    else {
+       body.put("error", "UNAUTHORIZED");
+       body.put("message", authException.getMessage());
+    }
 
     final ObjectMapper mapper = new ObjectMapper();
     mapper.writeValue(response.getOutputStream(), body);

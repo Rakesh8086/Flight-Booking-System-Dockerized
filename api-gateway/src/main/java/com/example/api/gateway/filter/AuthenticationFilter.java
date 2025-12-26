@@ -22,6 +22,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     	    "/authentication-service/api/auth/signin", 
     	    "/authentication-service/api/auth/logout",
     	    "/authentication-service/api/auth", 
+    	    "/authentication-service/api/test/change/password",
     	    "/eureka"
     };
 

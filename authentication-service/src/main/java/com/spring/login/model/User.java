@@ -1,8 +1,10 @@
 package com.spring.login.model;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -43,6 +45,8 @@ public class User {
 	@NotBlank
 	@Size(max = 120) // this is for saving in db, which is encrypted and hence long
 	private String password;
+	@Column(name = "password_changed_at", nullable = false)
+    private LocalDateTime passwordChangedAt;
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "user_roles", 
 	             joinColumns = @JoinColumn(name = "user_id"),
@@ -54,5 +58,6 @@ public class User {
 	    this.username = username;
 	    this.email = email;
 	    this.password = password;
+	    this.passwordChangedAt = LocalDateTime.now();
 	}
 }
