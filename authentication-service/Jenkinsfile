@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    stages {
+        stage('Cleanup Old Image') {
+            steps {
+                bat 'docker rmi authentication-service:latest || ver > nul'
+            }
+        }
+        stage('Build Artifact') {
+            steps {
+                dir('authentication-service') {
+                    bat 'mvn package -DskipTests'
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                dir('authentication-service') {
+                    bat 'docker build -t authentication-service:latest .' 
+                }
+            }
+        }
+    }
+}
