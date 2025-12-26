@@ -54,7 +54,13 @@ public class BookingController {
     }
 	
 	@DeleteMapping("/booking/cancel/{pnr}")
-    public ResponseEntity<String> cancelTicket(@PathVariable String pnr) {
+    public ResponseEntity<String> cancelTicket(@PathVariable String pnr,
+    		@RequestHeader("X-Authenticated-User") String loggedInEmail) {
+		Booking booking = bookingService.getTicketByPnr(pnr);
+		if(booking != null && !booking.getUserEmail().equals(loggedInEmail)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body("Access Denied: You do not own this ticket.");
+		}
         return bookingService.cancelTicket(pnr);
     }
 }
