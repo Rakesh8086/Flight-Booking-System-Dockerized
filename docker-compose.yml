@@ -78,7 +78,7 @@ services:
       dockerfile: Dockerfile
     container_name: flight-service-container
     ports:
-      - "8086:8086s"
+      - "8086:8086"
     environment:
       - SPRING_PROFILES_ACTIVE=docker
       - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
