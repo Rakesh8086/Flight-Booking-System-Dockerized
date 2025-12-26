@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    stages {
+        stage('Cleanup Old Image') {
+            steps {
+                bat 'docker rmi api-gateway:latest || ver > nul'
+            }
+        }
+        stage('Build Artifact') {
+            steps {
+                dir('api-gateway') {
+                    bat 'mvn package -DskipTests'
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                dir('api-gateway') {
+                    bat 'docker build -t api-gateway:latest .' 
+                }
+            }
+        }
+    }
+}
