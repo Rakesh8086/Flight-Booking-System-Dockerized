@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+    stages {
+        stage('Cleanup Old Image') {
+            steps {
+                bat 'docker rmi booking-service:latest || ver > nul'
+            }
+        }
+        stage('Build Artifact') {
+            steps {
+                dir('booking-service') {
+                    bat 'mvn package -DskipTests'
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                dir('booking-service') {
+                    bat 'docker build -t booking-service:latest .' 
+                }
+            }
+        }
+    }
+}
