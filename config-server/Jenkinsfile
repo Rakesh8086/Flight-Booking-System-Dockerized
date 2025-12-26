@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    stages {
+        stage('Cleanup Old Image') {
+            steps {
+                // cleans up old image
+                bat 'docker rmi config-server:latest || ver > nul'
+            }
+        }
+
+        stage('Build Artifact') {
+            steps {
+                dir('config-server') {
+                    bat 'mvn package -DskipTests'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('config-server') {
+                    bat 'docker build -t config-server:latest .'
+                }
+            }
+        }
+    }
+}
