@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   mysql-db:
     image: mysql/mysql-server:latest
@@ -23,9 +24,7 @@ services:
       start_period: 20s
 
   config-server:
-    build:
-      context: ./config-server
-      dockerfile: Dockerfile
+    image: config-server:latest
     container_name: config-server
     ports:
       - "8888:8888"
@@ -35,9 +34,7 @@ services:
       - microservice-network
 
   eureka-server:
-    build:
-      context: ./service-registry
-      dockerfile: Dockerfile
+    image: eureka-server:latest
     container_name: eureka-server-container
     ports:
       - "8761:8761"
@@ -54,9 +51,7 @@ services:
       - microservice-network
 
   api-gateway:
-    build:
-      context: ./api-gateway
-      dockerfile: Dockerfile
+    image: api-gateway:latest
     container_name: api-gateway-container
     ports:
       - "8082:8082"
@@ -73,9 +68,7 @@ services:
       - microservice-network
 
   flight-service:
-    build:
-      context: ./flight-service
-      dockerfile: Dockerfile
+    image: flight-service:latest
     container_name: flight-service-container
     ports:
       - "8086:8086"
@@ -94,9 +87,7 @@ services:
       - microservice-network
 
   authentication-service:
-    build:
-      context: ./authentication-service
-      dockerfile: Dockerfile
+    image: authentication-service:latest
     container_name: auth-service-container
     ports:
       - "8085:8085"
@@ -115,9 +106,7 @@ services:
       - microservice-network
 
   booking-service:
-    build:
-      context: ./booking-service
-      dockerfile: Dockerfile
+    image: booking-service:latest
     container_name: booking-service-container
     ports:
       - "8083:8083"
