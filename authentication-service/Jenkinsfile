@@ -21,4 +21,13 @@ pipeline {
             }
         }
     }
+    post { 
+        success {
+            echo 'Build successful. Triggering Master Deployment.'
+            build job: 'deploy-flight-app', wait: false
+        }
+        failure {
+            echo 'Build failed. Deployment skipped.'
+        }
+    }
 }
