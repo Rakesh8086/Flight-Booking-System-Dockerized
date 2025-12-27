@@ -9,7 +9,17 @@ pipeline {
         stage('Build Artifact') {
             steps {
                 dir('flight-service') {
-                    bat 'mvn package -DskipTests'
+                    bat 'mvn package -DskipTests=false'
+                }
+            }
+        }
+        stage('SonarCloud Analysis') {
+            steps {
+                withCredentials([string(credentialsId: 'SONAR_TOKEN', variable: 'SONAR_TOKEN')]) {
+                    dir('flight-service') {
+                        // properties already in pom
+                        bat "mvn sonar:sonar -Dsonar.token=${SONAR_TOKEN}"
+                    }
                 }
             }
         }
@@ -19,6 +29,15 @@ pipeline {
                     bat 'docker build -t flight-service:latest .' 
                 }
             }
+        }
+    }
+    post {
+        success {
+            echo 'Quality Check Passed and Image Built. Triggering Master Deployment.'
+            build job: 'deploy-flight-app', wait: false
+        }
+        failure {
+            echo 'Build failed. Deployment skipped.'
         }
     }
 }
